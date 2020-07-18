@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Individual Assignment - Data Survey Form</title>
+
+    <!-- import bootstrap framework -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="common.css">
+
+    <!-- we can load our scripts here since we defer their execution until after the page loads -->
+    <script defer src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Bootstrap -->
+    <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- Form Validation library (Parsley) -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
+    <script defer>
+        let autocomplete;
+        function autocompleteValidCallback(value) {
+            if (autocomplete && autocomplete.getPlace()) {
+                let val = autocomplete.getPlace().name == value;
+                return val;
+            }
+            return false;
+        };
+        document.addEventListener('DOMContentLoaded', function() {
+            let numberOne = Math.random() * 20 | 0;
+            let numberTwo = Math.random() * 20 | 0;
+            let sum = numberOne + numberTwo;
+            $('#captcha-hint')[0].innerText = numberOne + ' + ' + numberTwo + ' =';
+            window.Parsley.addValidator('captcha', {
+                requirementType: 'boolean',
+                validateNumber: (number) => number == sum,
+                messages: {
+                    en: "Please enter the sum of the two numbers shown"
+                }
+            });
+            window.Parsley.addValidator('address', {
+                requirementType: 'boolean',
+                validateString: autocompleteValidCallback,
+                messages: {
+                    en: "Please start typing and choose an address from the list"
+                }
+            });
+            window.Parsley.addValidator('phone', {
+                requirementType: 'boolean',
+                validateString: function(value) {
+                    return value.match(/^[0-9]{7}$/) ? true : false;
+                },
+                messages: {
+                    en: "Please enter a valid phone number"
+                }
+            })
+        });
+        function initMap() {
+            let form = document.getElementById('form');
+            
+            form.addEventListener('submit', function() {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                console.log('submit');
+            });
+
+            let inputAddress = document.getElementById('inputAddress');
+            autocomplete = new google.maps.places.Autocomplete(
+                    inputAddress, {types: ['geocode']}
+                );
+            autocomplete.setFields(['name']);
+            // // when we pick something from the list we need to revalidate the field
+            autocomplete.addListener('place_changed', function(place) {
+                $("#inputAddress").parsley().validate();
+            });
+        }
+    </script>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9bESkFeAO285OGIk8hZOjQweyrMDDVks&libraries=places&callback=initMap"></script>
+</head>
+
+<body>
+
+<nav class="navbar navbar-light bg-info">
+<a href="#" class="navbar-brand">Individual Assignment</a>
+</nav>
+
+<div class="container">
+<div class="jumbotron my-5">
+    <h1 class="display-4">Data Survey Form</h1>
+    <p class="lead">
+        Please enter your information below. Required fields are marked with an asterisk: (*)
+    </p>
+    <hr class="my-5">
+
+    <form action="results.html" id="form" class="needs-validation" novalidate data-parsley-validate>
+
+        <div class="form-row">
+            <!-- first name -->
+            <div class="col-6 col-md-4 mb-3">
+                <label for="inputFirstName">First Name (*)</label>
+                <input type="text" class="form-control" id="inputFirstName" name="firstName" required
+                    maxlength="40">
+            </div>
+            <!-- last name -->
+            <div class="col-6 col-md-4 mb-3">
+                <label for="inputLastName">Last Name (*)</label>
+                <input type="text" class="form-control" id="inputLastName" name="lastName" required
+                    maxlength="40">
+            </div>
+            <!-- address -->
+            <div class="col-12 col-md-4 mb-3">
+                <label for="inputAddress">Address (*)</label>
+                <input type="text" class="form-control" id="inputAddress" name="address" required
+                    data-parsley-address="true">
+            </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <div class="form-row">
+            <div class="col-12 col-md-3 mb-3">
+                <label for="inputBirthDate">Birth Date (*)</label>
+                <input type="date" class="form-control" id="inputBirthDate" name="birthDate" required>
+            </div>
+            <div class="col-12 col-md-3 mb-3">
+                <label for="inputEducation">Education Level</label>
+                <select name="education" class="form-control" name="education" id="inputEducation">
+                    <option value="">Select an option...</option>
+                    <option>High school</option>
+                    <option>College</option>
+                    <option>Graduate studies</option>
+                    <option>Ph.D</option>
+                </select>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="form-row">
+            <div class="col-6 col-sm-4 col-md-3 mb-3">
+                <label for="inputHeightFeet">Height (feet)</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="inputHeightFeet" name="heightFeet" min="0" max="9">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Feet</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4 col-md-3 mb-3">
+                <label for="inputHeightInches">Height (inches)</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="inputHeightInches" name="heightInches" min="0" max="11">
+                    <div class="input-group-append">
+                        <span class="input-group-text">Inches</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4">
+        
+        <div class="form-row">
+            <div class="form-group col-12 col-sm-8 col-md-3">
+                <label for="inputAddress">Phone Number (*)</label>
+                <input type="number" class="form-control" id="inputPhone" name="phone" required
+                    data-parsley-phone>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-12 col-sm-8 col-md-4">
+                <label for="inputEmail">Email Address (*)</label>
+                <input type="email" class="form-control" id="inputEmail" name="email" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-12 col-sm-8 col-md-4">
+                <label for="inputConfirmEmail">Confirm Email Address (*)</label>
+                <input type="text" class="form-control" id="inputConfirmEmail" name="confirmEmail" required
+                    data-parsley-equalto="#inputEmail">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-12 col-sm-6 col-md-4">
+                <label for="inputCaptcha">Prove you aren't a robot:</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="captcha-hint"></span>
+                    </div>
+                    <input type="number" class="form-control" id="inputCaptcha" name="captcha" required
+                        data-parsley-captcha>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="inputAgreeTerms" required>
+              <label class="form-check-label" for="inputAgreeTerms">
+                I agree to the <a href="#">terms and conditions</a>
+              </label>
+              <div class="invalid-feedback">
+                You must agree before submitting.
+              </div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary mx-auto db" type="submit">Submit</button>
+
+    </form>
+
+</div>
+</div>
+
+</body>
+
+</html>

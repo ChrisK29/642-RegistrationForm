@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Individual Assignment - Results</title>
+
+    <!-- import bootstrap framework -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="common.css">
+
+    <!-- we can load our scripts here since we defer their execution until after the page loads -->
+    <script defer src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Bootstrap -->
+    <script defer src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- Form Validation library (Parsley) -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js"></script>
+    <script defer>
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            let params = new URL(window.location.href).searchParams;
+            $('#firstName')[0].innerText = params.get('firstName');
+            $('#lastName')[0].innerText = params.get('lastName');
+            $('#address')[0].innerText = params.get('address');
+            $('#birthDate')[0].innerText = params.get('birthDate');
+            $('#education')[0].innerText = params.get('education');
+            $('#heightFeet')[0].innerText = params.get('heightFeet');
+            $('#heightInches')[0].innerText = params.get('heightInches');;
+            $('#phone')[0].innerText = params.get('phone');
+            $('#email')[0].innerText = params.get('email');
+        });
+
+        function initMap() {
+            let params = new URL(window.location.href).searchParams;
+            let addr = params.get('address');
+            if (!addr) return;
+
+            new google.maps.Geocoder().geocode({address: addr}, function(results, status) {
+                if (status == 'OK') {
+                    let pos = results[0].geometry.location;
+                    let map = new google.maps.Map(document.getElementById('map'), {zoom: 8, center: pos});
+                    let marker = new google.maps.Marker({position: pos, map: map});
+                }
+            })
+        }
+    </script>
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9bESkFeAO285OGIk8hZOjQweyrMDDVks&callback=initMap"></script>
+</head>
+
+<body>
+
+<nav class="navbar navbar-light bg-info">
+<a href="#" class="navbar-brand">Individual Assignment</a>
+</nav>
+
+<div class="container">
+<div class="jumbotron my-5">
+    <h1 class="display-4">Results</h1>
+    <p class="lead">
+        Thank you for your participation! Please check the results below are correct.
+    </p>
+    <hr class="my-5">
+
+    <div class="container">
+        <div class="row">
+        <div class="col-12 col-md-6">
+            <ul class="list-group">
+                <li class="list-group-item">First Name: <b><span id="firstName"></span></b></li>
+                <li class="list-group-item">Last Name: <b><span id="lastName"></span></b></li>
+                <li class="list-group-item">Address: <b><span id="address"></span></b></li>
+                <li class="list-group-item">Birth Date: <b><span id="birthDate"></span></b></li>
+                <li class="list-group-item">Education Level: <b><span id="education"></span></b></li>
+                <li class="list-group-item">Height: <b><span id="heightFeet"></span> feet, <span id="heightInches"></span> inches</b></li>
+                <li class="list-group-item">Phone Number: <b><span id="phone"></span></b></li>
+                <li class="list-group-item">Email Address: <b><span id="email"></span></b></li>
+            </ul>
+        </div>
+        <div class="col-12 col-md-6">
+            <div id="map"></div>
+        </div>
+        </div>
+
+    </div>
+
+</div>
+</div>
+
+</body>
+
+</html>
